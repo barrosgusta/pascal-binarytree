@@ -133,11 +133,6 @@ begin
 		GetMaxValue := root;
 end;
 
-function isActionValid(action: string): boolean;
-begin
-	isActionValid := true
-end;
-
 function GetAction(S: string): integer;
 begin
 	GetAction := GetNumbersFromString(S);	
@@ -243,15 +238,23 @@ Begin
   
 	while iAction <> 10 do
 	begin
-		writeln('Qual ação?');
-		writeln('1 - Mostrar EmOrdem, 2 - Inserir Valor, 3 - Remover Valor');
+		writeln('Qual ação?:');
+		writeln('1 - Mostrar Em-Ordem;');
+		writeln('2 - Mostrar Pós-Ordem;');
+		writeln('3 - Mostrar Pré-Ordem;');
+		writeln('4 - Inserir Valor;');
+		writeln('5 - Remover Valor;');
+		writeln('10 - Encerrar programa;');
 		read(sAction);
-		iAction := GetAction(sAction);
+		
+		iAction := GetNumbersFromString(sAction);
 		
 		case iAction of
 			1: InOrder(BinTree);
-			2: HandleInsert(BinTree);
-			3: HandleDelete(BinTree);
+			2: PostOrder(BinTree);
+			3: PreOrder(BinTree);
+			4: HandleInsert(BinTree);
+			5: HandleDelete(BinTree);
 		end;
 		
 		readkey;
