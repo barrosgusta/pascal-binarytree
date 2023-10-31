@@ -69,9 +69,32 @@ begin
 	begin
 		if (root^.LeftChild = NIL) and (root^.RightChild = NIL) then 
 			write(root^.Content, '||');
-			ShowLeafNodes(root^.LeftChild);
-			ShowLeafNodes(root^.RightChild);
+			
+		ShowLeafNodes(root^.LeftChild);
+		ShowLeafNodes(root^.RightChild);
 	end;
+end;
+
+Procedure CountLeafNodes(root: PNode; var Count: integer);
+begin
+	if root <> nil then 
+	begin
+		if (root^.LeftChild = NIL) and (root^.RightChild = NIL) then 
+			Inc(Count);
+
+	  CountLeafNodes(root^.LeftChild, Count);
+		CountLeafNodes(root^.RightChild, Count);
+	end;
+end;
+
+procedure HandleCountLeafNodes(root: PNode);
+var 
+	Count: Integer;
+begin
+	Count := 0;
+	CountLeafNodes(root, Count);
+	
+	writeln('A quantidade de elementos folha é de: ', Count); 
 end;
 
 procedure DisposeTree(root:PNode);
@@ -84,14 +107,50 @@ begin
 	end;
 end;
 
-procedure CountNodes(root:PNode;var Cont:Integer);
+procedure CountNodes(root:PNode;var Count: integer);
 begin
 	if root <> nil then 
 	begin
-		inc(cont);
-		CountNodes(root^.LeftChild,Cont);
-		CountNodes(root^.RightChild,Cont);
+		inc(Count);
+		CountNodes(root^.LeftChild, Count);
+		CountNodes(root^.RightChild, Count);
 	end;
+end;
+
+function GetHeight(root: PNode): integer;
+var
+	LeftHeight, RightHeight: integer;
+begin
+	LeftHeight  := 0;
+	RightHeight := 0;
+	
+	if root = nil then
+		GetHeight := -1
+	else
+	begin
+	  LeftHeight  := GetHeight(root^.LeftChild); 
+		RightHeight := GetHeight(root^.RightChild);
+	
+		if LeftHeight > RightHeight then
+			GetHeight := 1 + LeftHeight
+		else
+			GetHeight := 1 + RightHeight
+	end
+		
+end;
+
+procedure HandleGetHeight(root: PNode);
+begin
+	writeln('A altura desta árvore é de: ', GetHeight(root));
+end;
+
+procedure HandleShowNodesCount(root: PNode);
+var Count: integer;
+begin
+	Count := 0;
+	CountNodes(root, Count);
+	
+	writeln('A quantidade de elementos é de: ', Count);
 end;
 
 procedure SumNodes(root:PNode;var sum:Integer);
@@ -227,6 +286,29 @@ begin
 	RemoveFromTree(root, iValue);
 end;
 
+function IsTreeFull(root: PNode): boolean;
+begin
+	if root = nil then
+		isTreeFull := true
+	else
+	begin
+		if (root^.LeftChild = nil) and (root^.RightChild = nil) then
+			isTreeFull := true
+		else if (root^.LeftChild <> nil) and (root^.RightChild <> nil) then
+			isTreeFull := isTreeFull(root^.LeftChild) and isTreeFull(root^.RightChild)
+		else
+			isTreeFull := false;
+	end;
+end;
+
+procedure HandleIsTreeFull(root: PNode);
+begin
+	if IsTreeFull(root) then
+		writeln('A árvore é completa')
+	else
+		writeln('A árvore é incompleta')
+end;
+
 var
  sAction: string;
  iAction: integer;
@@ -236,25 +318,35 @@ var
 Begin
   InitBinTree(BinTree);
   
-	while iAction <> 10 do
+	while iAction <> 11 do
 	begin
 		writeln('Qual ação?:');
-		writeln('1 - Mostrar Em-Ordem;');
-		writeln('2 - Mostrar Pós-Ordem;');
-		writeln('3 - Mostrar Pré-Ordem;');
-		writeln('4 - Inserir Valor;');
-		writeln('5 - Remover Valor;');
-		writeln('10 - Encerrar programa;');
+		writeln('1 - Inserir Valor;');
+		writeln('2 - Remover Valor;');
+		writeln('3 - Mostrar Em-Ordem;');
+		writeln('4 - Mostrar Pós-Ordem;');
+		writeln('5 - Mostrar Pré-Ordem;');
+		writeln('6 - Mostrar Folhas;');
+		writeln('7 - Contar Folhas;');
+		writeln('8 - Contar Elementos;');
+		writeln('9 - Verificar altura;');
+		writeln('10 - Verificar se a árvore é completa;');
+		writeln('11 - Encerrar programa;');
 		read(sAction);
 		
 		iAction := GetNumbersFromString(sAction);
 		
 		case iAction of
-			1: InOrder(BinTree);
-			2: PostOrder(BinTree);
-			3: PreOrder(BinTree);
-			4: HandleInsert(BinTree);
-			5: HandleDelete(BinTree);
+			1: HandleInsert(BinTree);
+			2: HandleDelete(BinTree);
+			3: InOrder(BinTree);
+			4: PostOrder(BinTree);
+			5: PreOrder(BinTree);
+			6: ShowLeafNodes(BinTree);
+			7: HandleCountLeafNodes(BinTree);
+			8: HandleShowNodesCount(BinTree);
+			9: HandleGetHeight(BinTree);
+			10: HandleIsTreeFull(BinTree);
 		end;
 		
 		readkey;
